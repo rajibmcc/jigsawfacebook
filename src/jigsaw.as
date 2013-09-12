@@ -19,6 +19,8 @@ package
 			slidingpuzzle = new SlidingPuzzle();
 			addChild(slidingpuzzle);
 			
+			//just for test
+			
 			slidingpuzzle.startSlidingPuzzle();
 		}
 	}
