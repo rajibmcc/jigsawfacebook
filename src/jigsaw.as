@@ -10,7 +10,7 @@ package
 		public function jigsaw()
 		{			
 			bgRound = new Sprite();
-			bgRound.graphics.beginFill(0x00FF55, .5);
+			bgRound.graphics.beginFill(0x00FFFF, .5);
 			bgRound.graphics.drawRoundRect(0,0,800,500,20,20);
 			bgRound.graphics.endFill();
 			addChild(bgRound);
