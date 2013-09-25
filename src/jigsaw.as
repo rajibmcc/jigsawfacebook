@@ -3,6 +3,10 @@ package
 	import com.demonsters.debugger.MonsterDebugger;
 	import com.facebook.graph.Facebook;
 	
+	import fbconst.FbDialogue;
+	import fbconst.Fbfilters;
+	import fbconst.Fbwindow;
+	
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -11,6 +15,7 @@ package
 	[SWF(frameRate="60", width="800", height="550")]
 	public class jigsaw extends Sprite
 	{
+		protected static const APP_ID:String = '212685678892431';
 		private var bgRound:Sprite;
 		private var slidingpuzzle:SlidingPuzzle;
 		
@@ -31,9 +36,9 @@ package
 			addChild(bgRound);
 			
 			var ver:TextField = new TextField();
-			ver.textColor = 0xFFFFFF;
-			ver.text = 'ver: 0.2';
-			ver.x = 760;
+			ver.textColor = 0xFF0000;
+			ver.text = 'ver: 0.3e';
+			ver.x = 20;
 			addChild(ver);
 			
 			
@@ -43,11 +48,91 @@ package
 		protected function onAddedToStage(event:Event):void
 		{
 			// TODO Auto-generated method stub			
-			connectToFacebook();
+			connectToFacebook();			
+		}
+		
+		protected function onButtonClick(event:MouseEvent):void
+		{
+			// TODO Auto-generated method stub
+			var dat:Object;
+			switch(event.currentTarget)
+			{
+				case startBt:
+					//on Start button pressed
+					MonsterDebugger.trace(this,'start button pressed');
+					break;
+				case resetBt:
+					//on reset button pressed
+					break;
+				case inviteBt:
+					//on invite button pressed
+					MonsterDebugger.trace(this,'invite button pressed');
+					dat = new Object();
+					dat.message = 'Hi, Play puzz puzz game';
+					dat.title = '*** Puzz Puzz Game ***';
+					dat.filters = [Fbfilters.APP_NON_USER];
+					Facebook.ui(FbDialogue.APP_REQUEST,dat,onappRequest,Fbwindow.I_FRAME);
+					break;
+				case postBt:
+					//on post button pressed
+					MonsterDebugger.trace(this,'post button pressed');
+					dat = new Object();
+					dat.name = '^^^^^^ PUZZ PUZZ ^^^^^^';
+					dat.link = 'http://www.mcc.com.bd';
+					dat.caption = '***** I want to post something on my wall *****';
+					Facebook.ui(FbDialogue.FEED, dat, onFeed, Fbwindow.I_FRAME);
+					break;
+			}
+		}
+		
+		private function onFeed(feed:Object):void
+		{
+			// TODO Auto Generated method stub
+			if(feed == null){
+				MonsterDebugger.trace(this,'Nothing posted');
+			}
+			else{
+				MonsterDebugger.trace(this,feed);
+			}
+			
+		}
+		
+		private function onappRequest(result:Object):void
+		{
+			// TODO Auto Generated method stub
+			if(result == null){
+				MonsterDebugger.trace(this,'none selected');				
+			}
+			else if(result) {
+				MonsterDebugger.trace(this,result.to.length);
+			}
+			else{
+				MonsterDebugger.trace(this,'0 friend selected');
+			}
+		}
+		
+		private function connectToFacebook():void
+		{
+			// TODO Auto Generated method stub
+			MonsterDebugger.trace(this, "connect to facebook call");
+			Facebook.init(APP_ID, onInit);
+		}
+		
+		protected function onInit(result:Object, fail:Object):void {	
+			MonsterDebugger.trace(this, "onInit call");
+			if (result) { //already logged in because of existing session
+				MonsterDebugger.trace(this, "user logged in");
+				initiateGame();
+			} else {
+				MonsterDebugger.trace(this, "user not logged in");
+			}
+		}
+		
+		private function initiateGame():void
+		{
+			// TODO Auto Generated method stub
 			slidingpuzzle = new SlidingPuzzle();
-			addChild(slidingpuzzle);
-			
-			
+			addChild(slidingpuzzle);			
 			
 			//place buttons
 			startBt = new Bt_start();
@@ -68,56 +153,9 @@ package
 			
 			/////buttons listeners
 			startBt.addEventListener(MouseEvent.MOUSE_UP, onButtonClick);
-			
-			
+			inviteBt.addEventListener(MouseEvent.MOUSE_UP, onButtonClick);	
+			postBt.addEventListener(MouseEvent.MOUSE_UP, onButtonClick);
 			slidingpuzzle.startSlidingPuzzle();
-		}
-		
-		protected function onButtonClick(event:MouseEvent):void
-		{
-			// TODO Auto-generated method stub
-			switch(event.currentTarget)
-			{
-				case startBt:
-					//on Start button pressed
-					break;
-				case resetBt:
-					//on reset button pressed
-					break;
-				case inviteBt:
-					//on invite button pressed
-					MonsterDebugger.trace(this,'invite button pressed');
-					var dat:Object = new Object();
-					dat.message = 'Hi, Play puzz puzz game';
-					dat.title = 'Puzz Puzz Game';
-					dat.filters = 'app_non_users';
-					Facebook.ui('apprequest',dat,onappRequest);
-					break;
-				case postBt:
-					//on post button pressed
-					break;
-			}
-		}
-		
-		private function onappRequest(result:Object):void
-		{
-			// TODO Auto Generated method stub
-			MonsterDebugger.trace(this,result.to.length);
-		}
-		
-		private function connectToFacebook():void
-		{
-			// TODO Auto Generated method stub
-			Facebook.init('212685678892431',onFBinit);
-		}
-		
-		private function onFBinit(success:Object, fail:Object):void
-		{
-			// TODO Auto Generated method stub
-			MonsterDebugger.trace(this, "onFBinit call");
-			if(success) MonsterDebugger.trace(this, "user not logged in");
-			if(fail) MonsterDebugger.trace(this, "user logged in");
-			else MonsterDebugger.trace(this, 'there is a problem');
 		}
 	}
 }
